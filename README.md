@@ -4,7 +4,6 @@
 
   <br>
   <p style="color:white;"></p>
-
   <br>
 
   <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
@@ -24,11 +23,7 @@
 
   <br><br>
 
-  <a href="mailto:hyunjunn.kim@mail.utoronto.ca">
-    <img src="https://img.shields.io/badge/Email-000000?style=flat-square&logo=gmail&logoColor=white&colorA=white&colorB=000000&labelColor=000000" alt="Email">
-  </a>
-  <a href="https://www.linkedin.com/in/hyunjunekim/">
-    <img src="https://img.shields.io/badge/LinkedIn-000000?style=flat-square&logo=linkedin&logoColor=white&colorA=white&colorB=000000&labelColor=000000" alt="LinkedIn">
-  </a>
+  <a href="mailto:hyunjunn.kim@mail.utoronto.ca"><img src="https://img.shields.io/badge/Email-000000?style=for-the-badge&logo=gmail&logoColor=white&colorA=white&colorB=000000&labelColor=000000" alt="Email"></a>
+  <a href="https://www.linkedin.com/in/hyunjunekim/"><img src="https://img.shields.io/badge/LinkedIn-000000?style=for-the-badge&logo=linkedin&logoColor=white&colorA=white&colorB=000000&labelColor=000000" alt="LinkedIn"></a>
 
 </div>
