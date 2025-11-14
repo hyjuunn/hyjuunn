@@ -7,8 +7,6 @@
 
   <br>
 
-  <h3 style="color:white;">Tech Stack</h3>
-
   <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/C++-000000?style=for-the-badge&logo=c%2B%2B&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/JavaScript-000000?style=for-the-badge&logo=javascript&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
