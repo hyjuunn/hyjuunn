@@ -12,8 +12,6 @@
   <img src="https://img.shields.io/badge/JavaScript-000000?style=for-the-badge&logo=javascript&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/TypeScript-000000?style=for-the-badge&logo=typescript&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <br>
-  <img src="https://img.shields.io/badge/React-000000?style=for-the-badge&logo=react&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/PyTorch-000000?style=for-the-badge&logo=pytorch&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/Docker-000000?style=for-the-badge&logo=docker&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/Git-000000?style=for-the-badge&logo=git&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
