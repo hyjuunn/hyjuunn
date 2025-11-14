@@ -12,7 +12,7 @@
   <br>
   <img src="https://img.shields.io/badge/PyTorch-000000?style=for-the-badge&logo=pytorch&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/Docker-000000?style=for-the-badge&logo=docker&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
-  <img src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=black">
+  <img src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=000000">
   <img src="https://img.shields.io/badge/Git-000000?style=for-the-badge&logo=git&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
 
   <br><br>
