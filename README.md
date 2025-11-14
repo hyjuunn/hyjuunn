@@ -1,11 +1,11 @@
 <div align="center">
 
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=30&pause=1000&color=FFFFFF&background=00000000&center=true&vCenter=true&width=435&lines=Hello%2C+World!;I+Build+Clean+Code.;Welcome+to+My+Profile." alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=30&pause=1000&color=FFFFFF&background=00000000&center=true&vCenter=true&width=435&lines=Hello%2C+World!" alt="Typing SVG" />
 
   <br>
 
-  <h3 style="color:white;">💻 Simplicity is the ultimate sophistication.</h3>
-  <p style="color:white;">I am a Software Engineer passionate about minimalism and efficiency.</p>
+  <h3 style="color:white;">💻</h3>
+  <p style="color:white;"></p>
 
   <br>
 
