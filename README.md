@@ -5,9 +5,8 @@
   <br>
   <p style="color:white;"></p>
   <br>
-
-  <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/C++-000000?style=for-the-badge&logo=c%2B%2B&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
+  <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/JavaScript-000000?style=for-the-badge&logo=javascript&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <img src="https://img.shields.io/badge/TypeScript-000000?style=for-the-badge&logo=typescript&logoColor=white&colorA=white&colorB=000000&labelColor=000000">
   <br>
