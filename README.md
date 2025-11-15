@@ -1,8 +1,11 @@
 <div align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=30&pause=1000&color=FFFFFF&background=000000&center=true&vCenter=true&width=435&lines=Hello%2C+World!" alt="Typing SVG" />
   
-  <br> 
-  <br> 
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=30&pause=1000&color=000000&background=00000000&center=true&vCenter=true&width=435&lines=Hello%2C+World!">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=30&pause=1000&color=FFFFFF&background=00000000&center=true&vCenter=true&width=435&lines=Hello%2C+World!" alt="Typing SVG" />
+  </picture>
+  
+  <br><br> 
   
   <img src="https://img.shields.io/badge/C++-000000?style=for-the-badge&logo=c%2B%2B&logoColor=white&colorA=white&colorB=000000&labelColor=000000"> 
   <img src="https://img.shields.io/badge/Python-000000?style=for-the-badge&logo=python&logoColor=white&colorA=white&colorB=000000&labelColor=000000"> 
@@ -14,10 +17,19 @@
   <img src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux&logoColor=white&colorB=000000&labelColor=000000"> 
   <img src="https://img.shields.io/badge/Git-000000?style=for-the-badge&logo=git&logoColor=white&colorA=white&colorB=000000&labelColor=000000"> 
   
-  <br><br>
+  <br><br> 
   
-  <img src="https://github-readme-stats.vercel.app/api?username=hyjuunn&show_icons=true&theme=dark&hide_border=true&bg_color=000000&text_color=FFFFFF&title_color=FFFFFF" height="150" alt="stats graph" /> 
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=hyjuunn&layout=compact&theme=dark&hide_border=true&bg_color=000000&text_color=FFFFFF&title_color=FFFFFF" height="150" alt="languages graph" /> 
+  <h3>📊 GitHub Stats</h3> 
+  
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://github-readme-stats.vercel.app/api?username=hyjuunn&show_icons=true&theme=default&hide_border=true&bg_color=00000000">
+    <img src="https://github-readme-stats.vercel.app/api?username=hyjuunn&show_icons=true&theme=dark&hide_border=true&bg_color=00000000&text_color=FFFFFF&title_color=FFFFFF" height="150" alt="stats graph" />
+  </picture>
+  
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="https://github-readme-stats.vercel.app/api/top-langs/?username=hyjuunn&layout=compact&theme=default&hide_border=true&bg_color=00000000">
+    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=hyjuunn&layout=compact&theme=dark&hide_border=true&bg_color=00000000&text_color=FFFFFF&title_color=FFFFFF" height="150" alt="languages graph" />
+  </picture>
   
   <br><br> 
   
