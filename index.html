@@ -272,7 +272,9 @@
                     print(list||'<span class="muted">(empty)</span>');
                 }
 
-                function echo(args){ print(args.join(' ')) }
+                function echo(args){
+    print(escapeHtml(args.join(' ')));
+}
 
                 function pwd(){ print(cwd) }
 
