@@ -169,7 +169,8 @@
                         ['pwd','Show current path'],
                         ['cat <file>','Show file contents'],
                         ['clear','Clear screen'],
-                        ['echo <text>','Print text']
+                        ['echo <text>','Print text'],
+                        ['exit','Close this tab/window']
                     ];
                     cmds.forEach(([c,d])=>{
                         print(`<div class="help"><span class="cmd">${escapeHtml(c)}</span>— ${escapeHtml(d)}</div>`);
@@ -277,6 +278,31 @@
 
                 function clear(){ output.innerHTML = ''; }
 
+                // best-effort exit: browsers block programmatic tab closes unless the
+                // page was opened by script. We attempt to close, and if blocked,
+                // provide a clickable fallback link the user can press.
+                function exitCmd(){
+                    try{
+                        // try common patterns for closing
+                        window.open('','_self');
+                        window.close();
+                    }catch(e){ /* ignore */ }
+
+                    // after a short delay, provide a fallback clickable link (can't reliably
+                    // detect closed state across all browsers, so always provide the fallback).
+                    const id = 'close-fallback-' + Date.now();
+                    print(`<div class="muted">If the tab did not close automatically, <a href="#" class="link" id="${id}">click here to close it</a> or press <code>Ctrl+W</code>.</div>`);
+                    setTimeout(()=>{
+                        const a = document.getElementById(id);
+                        if(!a) return;
+                        a.addEventListener('click', function(ev){
+                            ev.preventDefault();
+                            try{ window.open('','_self'); window.close(); }catch(e){ /* ignore */ }
+                            try{ window.location.href = 'about:blank'; }catch(e){ /* ignore */ }
+                        });
+                    },50);
+                }
+
                 function updatePrompt(){
                     const dirEl = document.querySelector('.prompt .dir');
                     if(dirEl) dirEl.textContent = cwd;
@@ -320,6 +346,7 @@
                         case 'cd': cd(args); break;
                         case 'pwd': pwd(); break;
                         case 'cat': cat(args); break;
+                        case 'exit': exitCmd(); break;
                         case 'clear': clear(); break;
                         case 'echo': echo(args); break;
                         default:
@@ -331,7 +358,7 @@
 
                 function autocomplete(){
                     const val = input.value.trim();
-                    const candidates = ['help','ls','cd','pwd','cat','clear','echo'];
+                    const candidates = ['help','ls','cd','pwd','cat','clear','echo','exit'];
                     const matched = candidates.filter(c=>c.startsWith(val));
                     if(matched.length===1) input.value = matched[0] + ' ';
                 }
