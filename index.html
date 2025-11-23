@@ -153,58 +153,82 @@
                 // === Cloudflare logging config ===
                 const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
                 
-                // [수정됨] 토큰이 준비될 때까지 최대 4초간 기다리는 함수
-                async function waitForToken(){
-                    const el = document.querySelector('input[name="cf-turnstile-response"]');
-                    if(!el) return "";
-                    
-                    // 토큰이 있으면 바로 사용 (중복 사용 방지를 위해 값을 비움)
-                    if(el.value) {
-                        const t = el.value;
-                        el.value = ""; 
-                        return t;
-                    }
+                // === [핵심 변경] 로그 대기열 (Queue) 시스템 ===
+                const logQueue = [];
+                let isProcessingQueue = false;
 
-                    // 없으면 0.1초 간격으로 확인 (최대 40회 = 4초)
-                    for(let i=0; i<40; i++){
-                        await new Promise(r => setTimeout(r, 100));
+                // 1. 토큰이 준비될 때까지 무한 대기하는 함수 (백그라운드 처리용)
+                async function waitForTokenAndGet(){
+                    const el = document.querySelector('input[name="cf-turnstile-response"]');
+                    if(!el) return null;
+
+                    // 최대 30초 동안 토큰을 기다림 (보통 1~2초면 됨)
+                    for(let i=0; i<300; i++){
                         if(el.value) {
                             const t = el.value;
-                            el.value = ""; // 사용한 토큰 즉시 제거
+                            el.value = ""; // 사용한 토큰은 즉시 비움 (중복 방지)
                             return t;
                         }
+                        await new Promise(r => setTimeout(r, 100)); // 0.1초 대기
                     }
-                    return ""; // 4초 기다려도 없으면 포기
+                    return null; // 타임아웃
+                }
+
+                // 2. 대기열 처리기 (하나씩 꺼내서 전송 -> 리셋 -> 전송 반복)
+                async function processQueue(){
+                    if(isProcessingQueue) return; // 이미 처리 중이면 중복 실행 방지
+                    isProcessingQueue = true;
+
+                    while(logQueue.length > 0){
+                        // A. 대기열에서 가장 오래된 명령어 확인 (꺼내지는 않음)
+                        const currentItem = logQueue[0];
+
+                        // B. 토큰 확보 시도
+                        const token = await waitForTokenAndGet();
+                        
+                        // 토큰을 못 받았다면 (타임아웃 등) 잠시 쉬었다 다시 시도하거나, 스킵
+                        if(!token){
+                            // Turnstile이 먹통이면 무한루프 돌 수 있으므로 1초 대기 후 리셋 시도
+                            if(window.turnstile) window.turnstile.reset();
+                            await new Promise(r => setTimeout(r, 1000));
+                            continue;
+                        }
+
+                        // C. 전송 (토큰이 있으므로 전송)
+                        try{
+                            await fetch(WORKER_LOG_URL, {
+                                method: "POST",
+                                headers: {"Content-Type":"application/json"},
+                                body: JSON.stringify({
+                                    cmd: sanitizeForLog(currentItem.raw),
+                                    cwd: currentItem.cwd,
+                                    ts: currentItem.ts,
+                                    turnstileToken: token
+                                })
+                            });
+                        } catch(e){
+                            console.error("Log send error:", e);
+                        } finally {
+                            // D. 전송 완료 후 대기열에서 제거 및 위젯 리셋
+                            logQueue.shift(); // 성공하든 실패하든 일단 큐에서 제거 (다음거 처리)
+                            if(window.turnstile) window.turnstile.reset();
+                        }
+                    }
+
+                    isProcessingQueue = false;
                 }
                 
-                async function logCommand(raw){
-                    try{
-                        // [수정됨] 기다렸다가 토큰을 받아옵니다
-                        const token = await waitForToken();
-                        
-                        if(!token) {
-                            console.log("Log skipped: No token available (spam protection?)");
-                            return; 
-                        }
-                
-                        await fetch(WORKER_LOG_URL, {
-                            method: "POST",
-                            headers: {"Content-Type":"application/json"},
-                            body: JSON.stringify({
-                                cmd: sanitizeForLog(raw),
-                                cwd: cwd,
-                                ts: Date.now(),
-                                turnstileToken: token
-                            })
-                        });
-                    }catch(e){
-                        console.error("Log failed:", e);
-                    }finally{
-                        // [중요] 사용 후 리셋하여 다음 토큰 준비
-                        if(window.turnstile) {
-                            window.turnstile.reset();
-                        }
-                    }
+                // 3. 메인 로깅 함수 (이제 기다리지 않고 큐에 넣고 바로 끝냄)
+                function logCommand(raw){
+                    // 대기열에 작업 추가 (명령어, 현재위치, 시간)
+                    logQueue.push({
+                        raw: raw,
+                        cwd: cwd,
+                        ts: Date.now()
+                    });
+                    
+                    // 백그라운드 처리기 깨우기
+                    processQueue();
                 }
 
                 function sanitizeForLog(s){
@@ -370,7 +394,8 @@
                         const promptEcho = `<span class="hist-user">${userName}</span> <span class="hist-at">@</span> <span class="dir">${escapeHtml(cwd)}</span> $`;
                         print(`${promptEcho} <span class="typed">${escapeHtml(raw)}</span>`);
                         
-                        // 로그 전송은 백그라운드에서 진행 (await 안 함)
+                        // [중요] 사용자는 기다리지 않고 바로 다음 명령 입력 가능
+                        // 로그는 큐에 넣고 백그라운드에서 전송됨
                         logCommand(raw);
                         
                         handleCommand(raw);
