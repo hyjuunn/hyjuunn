@@ -138,10 +138,7 @@
 
             <div class="hint muted" style="margin-top:0.6rem">Use <code style="color:var(--neon)">↑</code>/<code style="color:var(--neon)">↓</code> to navigate history.</div>
         </main>
-        <div id="ts"
-             class="cf-turnstile"
-             data-sitekey="0x4AAAAAACCcOl0sTjQPi2hz"
-             data-size="invisible"></div>
+        <div id="ts"></div>
         <script>
             (function(){
                 const output = document.getElementById('output');
@@ -159,17 +156,33 @@
                     .slice(0, 200);
                 }
                 
+                let tsWidgetId = null;
+                window.addEventListener("load", () => {
+                  if (!window.turnstile) return;
+                
+                  window.turnstile.ready(() => {
+                    try {
+                      tsWidgetId = window.turnstile.render("#ts", {
+                        sitekey: "0x4AAAAAACCcOl0sTjQPi2hz",
+                        size: "invisible"
+                      });
+                    } catch (e) {
+                      console.error("Turnstile render failed", e);
+                    }
+                  });
+                });
                 
                 function getFreshTurnstileToken(){
                   return new Promise((resolve) => {
-                    if (!window.turnstile) return resolve("");
+                    if (!window.turnstile || tsWidgetId === null) return resolve("");
                 
                     window.turnstile.ready(() => {
                       try {
-                        window.turnstile.execute("#ts", {
+                        window.turnstile.execute(tsWidgetId, {
                           callback: (token) => resolve(token),
                         });
                       } catch (e) {
+                        console.error("Turnstile execute failed", e);
                         resolve("");
                       }
                     });
@@ -179,9 +192,12 @@
                 async function logCommand(raw){
                   try{
                     const token = await getFreshTurnstileToken();
-                    if(!token) return;
+                    if(!token) {
+                      console.warn("No turnstile token");
+                      return;
+                    }
                 
-                    await fetch(WORKER_LOG_URL, {
+                    const res = await fetch(WORKER_LOG_URL, {
                       method: "POST",
                       headers: {"Content-Type":"application/json"},
                       body: JSON.stringify({
@@ -192,10 +208,14 @@
                       })
                     });
                 
-                    try { window.turnstile.reset("#ts"); } catch {}
-                  }catch(e){}
+                    // 디버깅용 (지금만)
+                    if(!res.ok) console.warn("log failed:", res.status);
+                
+                    try { window.turnstile.reset(tsWidgetId); } catch {}
+                  }catch(e){
+                    console.error("logCommand error", e);
+                  }
                 }
-
 
                 const fileSystem = {
                     '~': {
