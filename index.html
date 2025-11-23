@@ -114,6 +114,7 @@
                 .terminal{font-size:0.95rem}
             }
         </style>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     </head>
     <body>
         <main class="shell-wrap">
@@ -137,7 +138,9 @@
 
             <div class="hint muted" style="margin-top:0.6rem">Use <code style="color:var(--neon)">↑</code>/<code style="color:var(--neon)">↓</code> to navigate history.</div>
         </main>
-
+        <div class="cf-turnstile"
+             data-sitekey="0x4AAAAAACCcOl0sTjQPi2hz"
+             data-size="invisible"></div>
         <script>
             (function(){
                 const output = document.getElementById('output');
@@ -145,6 +148,39 @@
                 const terminal = document.getElementById('terminal');
                 const userName = 'user';
                 const userEl = document.querySelector('.prompt .user');
+                // === Cloudflare logging config ===
+                const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
+                
+                function getTurnstileToken(){
+                    const el = document.querySelector('input[name="cf-turnstile-response"]');
+                    return el ? el.value : "";
+                }
+                
+                function sanitizeForLog(s){
+                    return String(s || "")
+                      .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig, "[email]")
+                      .replace(/\b\d{3,}\b/g, "[num]")
+                      .slice(0, 200);
+                }
+                
+                async function logCommand(raw){
+                    try{
+                        const token = getTurnstileToken();
+                        if(!token) return; 
+                
+                        await fetch(WORKER_LOG_URL, {
+                            method: "POST",
+                            headers: {"Content-Type":"application/json"},
+                            body: JSON.stringify({
+                                cmd: sanitizeForLog(raw),
+                                cwd,
+                                ts: Date.now(),
+                                turnstileToken: token
+                            })
+                        });
+                    }catch(e){
+                    }
+                }
 
                 const fileSystem = {
                     '~': {
@@ -329,6 +365,7 @@
                         if(!raw) { input.value=''; return }
                         const promptEcho = `<span class="hist-user">${userName}</span> <span class="hist-at">@</span> <span class="dir">${escapeHtml(cwd)}</span> $`;
                         print(`${promptEcho} <span class="typed">${escapeHtml(raw)}</span>`);
+                        logCommand(raw);
                         handleCommand(raw);
                         history.unshift(raw);
                         histIndex = -1;
