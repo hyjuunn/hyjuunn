@@ -138,7 +138,8 @@
 
             <div class="hint muted" style="margin-top:0.6rem">Use <code style="color:var(--neon)">↑</code>/<code style="color:var(--neon)">↓</code> to navigate history.</div>
         </main>
-        <div class="cf-turnstile"
+        <div id="ts"
+             class="cf-turnstile"
              data-sitekey="0x4AAAAAACCcOl0sTjQPi2hz"
              data-size="invisible"></div>
         <script>
@@ -151,36 +152,50 @@
                 // === Cloudflare logging config ===
                 const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
                 
-                function getTurnstileToken(){
-                    const el = document.querySelector('input[name="cf-turnstile-response"]');
-                    return el ? el.value : "";
+                function sanitizeForLog(s){
+                  return String(s || "")
+                    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig, "[email]")
+                    .replace(/\b\d{3,}\b/g, "[num]")
+                    .slice(0, 200);
                 }
                 
-                function sanitizeForLog(s){
-                    return String(s || "")
-                      .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig, "[email]")
-                      .replace(/\b\d{3,}\b/g, "[num]")
-                      .slice(0, 200);
+                
+                function getFreshTurnstileToken(){
+                  return new Promise((resolve) => {
+                    if (!window.turnstile) return resolve("");
+                
+                    window.turnstile.ready(() => {
+                      try {
+                        window.turnstile.execute("#ts", {
+                          callback: (token) => resolve(token),
+                        });
+                      } catch (e) {
+                        resolve("");
+                      }
+                    });
+                  });
                 }
                 
                 async function logCommand(raw){
-                    try{
-                        const token = getTurnstileToken();
-                        if(!token) return; 
+                  try{
+                    const token = await getFreshTurnstileToken();
+                    if(!token) return;
                 
-                        await fetch(WORKER_LOG_URL, {
-                            method: "POST",
-                            headers: {"Content-Type":"application/json"},
-                            body: JSON.stringify({
-                                cmd: sanitizeForLog(raw),
-                                cwd,
-                                ts: Date.now(),
-                                turnstileToken: token
-                            })
-                        });
-                    }catch(e){
-                    }
+                    await fetch(WORKER_LOG_URL, {
+                      method: "POST",
+                      headers: {"Content-Type":"application/json"},
+                      body: JSON.stringify({
+                        cmd: sanitizeForLog(raw),
+                        cwd,
+                        ts: Date.now(),
+                        turnstileToken: token
+                      })
+                    });
+                
+                    try { window.turnstile.reset("#ts"); } catch {}
+                  }catch(e){}
                 }
+
 
                 const fileSystem = {
                     '~': {
