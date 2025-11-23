@@ -1,455 +1,409 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-        <title>hyjuunn</title>
-        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-91T0DTP2N4"></script>
-        <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-91T0DTP2N4');
-        </script>
-        <style>
-            :root{
-                --bg:#050507;
-                --panel:#0b0c10;
-                --neon:#00e6ff; /* neon blue */
-                --dir-blue:#007aa0; /* dark neon blue for folder names */
-                --hist-blue:#ff4db8; /* darker blue for history username */
-                --typed:#ffffff; /* typed text and caret now white */
-                --error:#ff4b4b; /* red for errors */
-                --file:#ffd166; /* neon yellow for files */
-                --accent:#ff4db8; /* neon pink accent for username */
-                --purple:#a78bfa; /* extra accent */
-                --muted:#cfcfcf;
-                --radius:10px;
-                --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Cascadia Mono', 'Segoe UI Mono', monospace;
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>hyjuunn</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-91T0DTP2N4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-91T0DTP2N4');
+    </script>
+    <style>
+      :root{
+        --bg:#050507;
+        --panel:#0b0c10;
+        --neon:#00e6ff;
+        --dir-blue:#007aa0;
+        --hist-blue:#ff4db8;
+        --typed:#ffffff;
+        --error:#ff4b4b;
+        --file:#ffd166;
+        --accent:#ff4db8;
+        --purple:#a78bfa;
+        --muted:#cfcfcf;
+        --radius:10px;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Cascadia Mono', 'Segoe UI Mono', monospace;
+      }
+      html,body{height:100%;}
+      html{font-size:clamp(14px, 1.5vw, 18px);}
+      body{
+        margin:0;
+        background:linear-gradient(180deg, var(--bg) 0%, #07080a 100%);
+        color:var(--muted);
+        font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:2rem;
+        min-height:100vh;
+        overflow-x:hidden;
+        box-sizing:border-box;
+      }
+      .shell-wrap{
+        width:100%;
+        max-width:980px;
+        background:var(--panel);
+        border-radius:var(--radius);
+        box-shadow:0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+        padding:1.25rem;
+        box-sizing:border-box;
+        border:1px solid rgba(0,230,255,0.06);
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        max-height:calc(100vh - 4rem);
+        overflow:hidden;
+      }
+      header.title{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem}
+      .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,#ff6b6b,#ff9f6b);box-shadow:0 0 6px rgba(255,111,111,0.15)}
+      .title h2{margin:0;font-size:1rem;color:var(--neon);font-weight:700;font-family:var(--mono)}
+      .typed{color:var(--typed)}
+      .error{color:var(--error);font-weight:700}
+      .file{color:var(--file)}
+      .hist-user{color:var(--hist-blue);font-weight:700}
+      .help{color:#ffffff;font-family:var(--mono);font-weight:500}
+      .help .cmd{color:#ffffff;font-weight:700;padding-right:0.5rem}
+      .terminal{
+        background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.04));
+        padding:1rem;
+        border-radius:8px;
+        min-height:320px;
+        max-height:65vh;
+        overflow:auto;
+        font-family:var(--mono);
+        font-size:1rem;
+        color:var(--neon);
+        line-height:1.5;
+        text-align:left;
+        box-sizing:border-box;
+        word-break:break-word;
+        overflow-wrap:break-word;
+      }
+      .line{white-space:pre-wrap;word-wrap:break-word}
+      .muted{color:var(--muted)}
+      .prompt{display:flex;gap:0.5rem;align-items:center}
+      .prompt .user{color:var(--accent);font-weight:700;min-width:0}
+      .prompt .at{color:var(--neon);opacity:1}
+      .prompt .dir{color:var(--neon);font-weight:600}
+      .dir-name{color:var(--dir-blue);font-weight:600}
+      .hist-at{color:var(--neon);opacity:1}
+      .input-wrap{flex:1;display:flex;min-width:0}
+      .cmd-input{
+        background:transparent;border:0;outline:0;color:var(--typed);flex:1;font-family:var(--mono);font-size:1rem;padding:0;margin:0;min-width:0;caret-color:var(--typed);width:100%;max-width:100%;box-sizing:border-box;
+      }
+      a.link{color:var(--neon);text-decoration:underline}
+      @media (max-width:520px){
+        .shell-wrap{padding:0.8rem}
+        .terminal{font-size:0.95rem}
+      }
+      #ts{position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;}
+    </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  </head>
+  <body>
+    <main class="shell-wrap">
+      <header class="title">
+        <div class="dot" aria-hidden></div>
+        <div class="title"><h2>hyjuunn — terminal</h2></div>
+      </header>
+
+      <section id="terminal" class="terminal" role="region" aria-label="Interactive terminal">
+        <div class="line muted">Welcome — type <span style="color:var(--neon)">help</span> to see available commands.</div>
+        <div id="output"></div>
+        <div id="inputLine" class="prompt" aria-live="polite">
+          <div class="user">hyunjune</div>
+          <div class="at">@</div>
+          <div class="dir">~</div>
+          <div class="input-wrap">
+            <input id="cmd" class="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </div>
+        </div>
+      </section>
+
+      <div class="hint muted" style="margin-top:0.6rem">Use <code style="color:var(--neon)">↑</code>/<code style="color:var(--neon)">↓</code> to navigate history.</div>
+    </main>
+
+    <div id="ts"></div>
+
+    <script>
+      (function(){
+        const output = document.getElementById('output');
+        const input = document.getElementById('cmd');
+        const terminal = document.getElementById('terminal');
+        const userName = 'user';
+        const userEl = document.querySelector('.prompt .user');
+        const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
+
+        function escapeHtml(s){
+          return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        function sanitizeForLog(s){
+          return String(s || "")
+            .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig, "[email]")
+            .replace(/\b\d{3,}\b/g, "[num]")
+            .slice(0, 200);
+        }
+
+        let tsWidgetId = null;
+        let tsReadyResolve;
+        const tsReady = new Promise(res => { tsReadyResolve = res; });
+
+        function initTurnstile(){
+          if (!window.turnstile) return;
+          window.turnstile.ready(() => {
+            try {
+              tsWidgetId = window.turnstile.render("#ts", {
+                sitekey: "0x4AAAAAACCcOl0sTjQPi2hz",
+                size: "invisible"
+              });
+              tsReadyResolve();
+            } catch(e) {}
+          });
+        }
+
+        initTurnstile();
+        window.addEventListener("load", initTurnstile);
+
+        async function getFreshTurnstileToken(){
+          await tsReady;
+          return new Promise(resolve => {
+            if (!window.turnstile || tsWidgetId === null) return resolve("");
+            try {
+              window.turnstile.execute(tsWidgetId, {
+                callback: token => resolve(token)
+              });
+            } catch(e){
+              resolve("");
             }
-            html,body{height:100%;}
-            html{font-size:clamp(14px, 1.5vw, 18px);} /* zoom-friendly base */
-            body{
-                margin:0;
-                background:linear-gradient(180deg, var(--bg) 0%, #07080a 100%);
-                color:var(--muted);
-                font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                -webkit-font-smoothing:antialiased;
-                -moz-osx-font-smoothing:grayscale;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                padding:2rem;
-                min-height:100vh;
-                overflow-x:hidden; /* prevent horizontal page growth */
-                box-sizing:border-box;
+          });
+        }
+
+        async function logCommand(raw){
+          const safeCmd = sanitizeForLog(raw);
+          const safeCwd = cwd;
+          try{
+            const token = await getFreshTurnstileToken();
+            if(!token) return;
+            await fetch(WORKER_LOG_URL, {
+              method: "POST",
+              mode: "cors",
+              credentials: "omit",
+              keepalive: true,
+              headers: {"Content-Type":"application/json"},
+              body: JSON.stringify({
+                cmd: safeCmd,
+                cwd: safeCwd,
+                ts: Date.now(),
+                turnstileToken: token
+              })
+            });
+            try { window.turnstile.reset(tsWidgetId); } catch(e) {}
+          } catch(e){}
+        }
+
+        const fileSystem = {
+          '~': { type:'dir', children:['hyunjune','linkedin','github'] },
+          'hyunjune':{type:'dir', children:['about.txt','skills.txt','contact.txt']},
+          'about.txt':{type:'file', content:'A Software Engineer with a unique blend of high-level and low-level programming expertise. Work experience as a software engineering intern in Alocados Corp, and as an operations specialist in Orders Directorate of the Eighth Army. Fluency in C/C++ and Python with expertise in ML, strongly backgrounded by a GCP PMLE certification. Led key projects of development of a VLM (NIPA-Google) and a GIS mapping system (University of Toronto’s Engineering Department).\nSoon to begin a Machine Learning Software Engineer Internship at AMD, contributing to GPU-accelerated ML systems.'},
+          'skills.txt':{type:'file', content:'Languages: C/C++, Python, SQL, JavaScript, HTML/CSS, ARM Assembly, Verilog\nFrameworks/Libraries: FastAPI, Node.js, React, AsyncIO, TensorFlow, PyTorch, scikit-learn, Numpy, pandas\nDatabases: MongoDB, PostgreSQL\nTools: Git, Docker, Kubernetes, AWS, Google Cloud, VS Code, Jupyter, Quartus, ModelSim, FPGA'},
+          'contact.txt':{type:'file', content:'hyunjunn.kim@mail.utoronto.ca'},
+          'linkedin':{type:'link', url:'https://www.linkedin.com/in/hyunjunekim/'},
+          'github':{type:'link', url:'https://github.com/hyjuunn'}
+        };
+
+        let cwd = '~';
+        let prevCwd = null;
+
+        function print(html, className){
+          const el = document.createElement('div');
+          el.className = 'line' + (className? ' '+className : '');
+          el.innerHTML = html;
+          output.appendChild(el);
+          terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function help(){
+          print('<div class="help">Available commands:</div>');
+          const cmds = [
+            ['help','Show this help'],
+            ['ls','List files/folders'],
+            ['cd <name>','Change directory'],
+            ['pwd','Show current path'],
+            ['cat <file>','Show file contents'],
+            ['clear','Clear screen'],
+            ['echo <text>','Print text'],
+            ['exit','Close this tab/window']
+          ];
+          cmds.forEach(([c,d])=>{
+            print(`<div class="help"><span class="cmd">${escapeHtml(c)}</span>— ${escapeHtml(d)}</div>`);
+          });
+        }
+
+        function cd(args){
+          const target = args[0];
+          if(!target || target==='~'){ cwd='~'; updatePrompt(); return }
+          const t = String(target).replace(/\/+$/,'');
+          if(t === '.'){
+            if(prevCwd){ const old = cwd; cwd = prevCwd; prevCwd = old; updatePrompt(); }
+            else { print('<span class="muted">No previous directory</span>'); }
+            return;
+          }
+          const curNode = fileSystem[cwd];
+          if(!curNode || curNode.type !== 'dir' || !Array.isArray(curNode.children) || !curNode.children.includes(t)){
+            print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`);
+            return;
+          }
+          const entry = fileSystem[t];
+          if(!entry){ print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
+          if(entry.type === 'link'){
+            const url = entry.url;
+            try{ window.open(url, '_blank'); }catch(e){}
+            print(`<span class="muted">Opening ${escapeHtml(url)}</span>`);
+            return;
+          }
+          if(entry.type === 'dir'){
+            prevCwd = cwd;
+            cwd = t; updatePrompt();
+            return;
+          }
+          print(`<span class="error">Not a directory: ${escapeHtml(t)}</span>`);
+        }
+
+        function cat(args){
+          const name = (args && args[0]) ? String(args[0]).trim() : '';
+          if(!name){ print('<span class="muted">Usage: cat &lt;file&gt;</span>'); return }
+          const curNode = fileSystem[cwd];
+          if(!curNode || curNode.type!=='dir' || !Array.isArray(curNode.children)){
+            print(`<span class="error">Not a directory: ${escapeHtml(cwd)}</span>`); return
+          }
+          if(!curNode.children.includes(name)){
+            print(`<span class="error">No such file: ${escapeHtml(name)}</span>`); return
+          }
+          const node = fileSystem[name];
+          if(!node || node.type !== 'file'){ print(`<span class="error">No such file: ${escapeHtml(name)}</span>`); return }
+          const content = escapeHtml(node.content || '');
+          print(`<span class="muted">${content.replace(/\n/g,'<br>')}</span>`);
+        }
+
+        function ls(args){
+          const node = fileSystem[cwd];
+          if(!node || node.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(cwd)}</span>`); return }
+          let target = cwd;
+          if(args && args.length>0){
+            const raw = String(args[0]).trim();
+            if(raw){
+              const t = raw.replace(/\/+$/,'');
+              if(t === '~' || t === '~/'){ prevCwd = cwd; target = '~'; }
+              else if(t.startsWith('~/')){
+                const name = t.slice(2);
+                if(fileSystem[name] && fileSystem[name].type==='dir') target = name;
+                else { print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
+              } else {
+                if(!node.children || !node.children.includes(t)){ print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
+                const entry = fileSystem[t];
+                if(!entry || entry.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(t)}</span>`); return }
+                target = t;
+              }
             }
-            .shell-wrap{
-                width:100%;
-                max-width:980px;
-                background:var(--panel);
-                border-radius:var(--radius);
-                box-shadow:0 10px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-                padding:1.25rem;
-                box-sizing:border-box;
-                border:1px solid rgba(0,230,255,0.06);
-                display:flex;
-                flex-direction:column;
-                align-items:stretch;
-                max-height:calc(100vh - 4rem); /* keep the shell within viewport */
-                overflow:hidden; /* prevent shell from growing the page */
-            }
-            header.title{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem}
-            .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,#ff6b6b,#ff9f6b);box-shadow:0 0 6px rgba(255,111,111,0.15)}
-            .title h2{margin:0;font-size:1rem;color:var(--neon);font-weight:700;font-family:var(--mono)}
+          }
+          const listNode = fileSystem[target];
+          if(!listNode || listNode.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(target)}</span>`); return }
+          const list = (listNode.children||[]).map(name=>{
+            const n = fileSystem[name]||{};
+            if(n.type==='dir') return `<span class="dir-name">${escapeHtml(name)}/</span>`;
+            if(n.type==='link') return `<span style="color:var(--purple)">${escapeHtml(name)}/</span>`;
+            return `<span class="file">${escapeHtml(name)}</span>`;
+          }).join('  ');
+          print(list||'<span class="muted">(empty)</span>');
+        }
 
-            /* color classes */
-            .typed{color:var(--typed)}
-            .error{color:var(--error);font-weight:700}
-            .file{color:var(--file)}
-            .hist-user{color:var(--hist-blue);font-weight:700}
-            .help{color:#ffffff;font-family:var(--mono);font-weight:500}
-            .help .cmd{color:#ffffff;font-weight:700;padding-right:0.5rem}
+        function echoCmd(args){ print(escapeHtml(args.join(' '))); }
+        function pwd(){ print(cwd); }
+        function clear(){ output.innerHTML = ''; }
 
-            .terminal{
-                background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.04));
-                padding:1rem;
-                border-radius:8px;
-                min-height:320px;
-                max-height:65vh;
-                overflow:auto;
-                font-family:var(--mono);
-                font-size:1rem;
-                color:var(--neon);
-                line-height:1.5;
-                text-align:left;
-                box-sizing:border-box;
-                word-break:break-word; /* break long tokens to avoid expanding */
-                overflow-wrap:break-word;
-            }
-            .line{white-space:pre-wrap;word-wrap:break-word}
-            .muted{color:var(--muted)}
+        function exitCmd(){
+          try{ window.open('','_self'); window.close(); }catch(e){}
+          const id = 'close-fallback-' + Date.now();
+          print(`<div class="muted">If the tab did not close automatically, <a href="#" class="link" id="${id}">click here to close it</a> or press <code>Ctrl+W</code>.</div>`);
+          setTimeout(()=>{
+            const a = document.getElementById(id);
+            if(!a) return;
+            a.addEventListener('click', function(ev){
+              ev.preventDefault();
+              try{ window.open('','_self'); window.close(); }catch(e){}
+              try{ window.location.href = 'about:blank'; }catch(e){}
+            });
+          },50);
+        }
 
-            .prompt{display:flex;gap:0.5rem;align-items:center}
-            .prompt .user{color:var(--accent);font-weight:700;min-width:0}
-            .prompt .at{color:var(--neon);opacity:1}
-            .prompt .dir{color:var(--neon);font-weight:600}
-            .dir-name{color:var(--dir-blue);font-weight:600}
-            .hist-at{color:var(--neon);opacity:1}
-            .input-wrap{flex:1;display:flex;min-width:0}
-            .cmd-input{
-                background:transparent;border:0;outline:0;color:var(--typed);flex:1;font-family:var(--mono);font-size:1rem;padding:0;margin:0;min-width:0;caret-color:var(--typed);width:100%;max-width:100%;box-sizing:border-box;
-            }
+        function updatePrompt(){
+          const dirEl = document.querySelector('.prompt .dir');
+          if(dirEl) dirEl.textContent = cwd;
+          if(userEl) userEl.textContent = userName;
+        }
 
-            .info-block{color:var(--muted);padding:0.25rem 0}
-            a.link{color:var(--neon);text-decoration:underline}
+        const history = [];
+        let histIndex = -1;
 
-            footer.hint{margin-top:0.6rem;color:rgba(255,255,255,0.06);font-size:0.85rem}
+        input.addEventListener('keydown', async function(e){
+          if(e.key === 'Enter'){
+            const raw = input.value.trim();
+            if(!raw) { input.value=''; return }
+            const promptEcho = `<span class="hist-user">${userName}</span> <span class="hist-at">@</span> <span class="dir">${escapeHtml(cwd)}</span> $`;
+            print(`${promptEcho} <span class="typed">${escapeHtml(raw)}</span>`);
+            logCommand(raw);
+            handleCommand(raw);
+            history.unshift(raw);
+            histIndex = -1;
+            input.value = '';
+            e.preventDefault();
+          } else if(e.key === 'ArrowUp'){
+            if(history.length>0){ histIndex = Math.min(history.length-1, (histIndex+1)); input.value = history[histIndex] }
+            e.preventDefault();
+          } else if(e.key === 'ArrowDown'){
+            if(history.length>0){ histIndex = Math.max(-1, (histIndex-1)); input.value = history[histIndex]||'' }
+            e.preventDefault();
+          } else if(e.key === 'Tab'){
+            e.preventDefault();
+            autocomplete();
+          }
+        });
 
-            /* responsive tweaks */
-            @media (max-width:520px){
-                .shell-wrap{padding:0.8rem}
-                .terminal{font-size:0.95rem}
-            }
-        </style>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-    </head>
-    <body>
-        <main class="shell-wrap">
-            <header class="title">
-                <div class="dot" aria-hidden></div>
-                <div class="title"><h2>hyjuunn — terminal</h2></div>
-            </header>
+        function handleCommand(raw){
+          const parts = raw.split(/\s+/).filter(Boolean);
+          const cmd = parts[0].toLowerCase();
+          const args = parts.slice(1);
+          switch(cmd){
+            case 'help': help(); break;
+            case 'ls': ls(args); break;
+            case 'cd': cd(args); break;
+            case 'pwd': pwd(); break;
+            case 'cat': cat(args); break;
+            case 'exit': exitCmd(); break;
+            case 'clear': clear(); break;
+            case 'echo': echoCmd(args); break;
+            default:
+              print('<span class="error">Unknown command: '+escapeHtml(cmd)+'</span>');
+          }
+        }
 
-            <section id="terminal" class="terminal" role="region" aria-label="Interactive terminal">
-                <div class="line muted">Welcome — type <span style="color:var(--neon)">help</span> to see available commands.</div>
-                <div id="output"></div>
-                <div id="inputLine" class="prompt" aria-live="polite">
-                    <div class="user">hyunjune</div>
-                    <div class="at">@</div>
-                    <div class="dir">~</div>
-                    <div class="input-wrap">
-                        <input id="cmd" class="cmd-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-                    </div>
-                </div>
-            </section>
+        function autocomplete(){
+          const val = input.value.trim();
+          const candidates = ['help','ls','cd','pwd','cat','clear','echo','exit'];
+          const matched = candidates.filter(c=>c.startsWith(val));
+          if(matched.length===1) input.value = matched[0] + ' ';
+        }
 
-            <div class="hint muted" style="margin-top:0.6rem">Use <code style="color:var(--neon)">↑</code>/<code style="color:var(--neon)">↓</code> to navigate history.</div>
-        </main>
-        <div id="ts"></div>
-        <script>
-            (function(){
-                const output = document.getElementById('output');
-                const input = document.getElementById('cmd');
-                const terminal = document.getElementById('terminal');
-                const userName = 'user';
-                const userEl = document.querySelector('.prompt .user');
-                // === Cloudflare logging config ===
-                const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
-                
-                function sanitizeForLog(s){
-                  return String(s || "")
-                    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/ig, "[email]")
-                    .replace(/\b\d{3,}\b/g, "[num]")
-                    .slice(0, 200);
-                }
-                
-                let tsWidgetId = null;
-                window.addEventListener("load", () => {
-                  if (!window.turnstile) return;
-                
-                  window.turnstile.ready(() => {
-                    try {
-                      tsWidgetId = window.turnstile.render("#ts", {
-                        sitekey: "0x4AAAAAACCcOl0sTjQPi2hz",
-                        size: "invisible"
-                      });
-                    } catch (e) {
-                      console.error("Turnstile render failed", e);
-                    }
-                  });
-                });
-                
-                function getFreshTurnstileToken(){
-                  return new Promise((resolve) => {
-                    if (!window.turnstile || tsWidgetId === null) return resolve("");
-                
-                    window.turnstile.ready(() => {
-                      try {
-                        window.turnstile.execute(tsWidgetId, {
-                          callback: (token) => resolve(token),
-                        });
-                      } catch (e) {
-                        console.error("Turnstile execute failed", e);
-                        resolve("");
-                      }
-                    });
-                  });
-                }
-                
-                async function logCommand(raw){
-                  try{
-                    const token = await getFreshTurnstileToken();
-                    if(!token) {
-                      console.warn("No turnstile token");
-                      return;
-                    }
-                
-                    const res = await fetch(WORKER_LOG_URL, {
-                      method: "POST",
-                      headers: {"Content-Type":"application/json"},
-                      body: JSON.stringify({
-                        cmd: sanitizeForLog(raw),
-                        cwd,
-                        ts: Date.now(),
-                        turnstileToken: token
-                      })
-                    });
-                
-                    // 디버깅용 (지금만)
-                    if(!res.ok) console.warn("log failed:", res.status);
-                
-                    try { window.turnstile.reset(tsWidgetId); } catch {}
-                  }catch(e){
-                    console.error("logCommand error", e);
-                  }
-                }
-
-                const fileSystem = {
-                    '~': {
-                        type:'dir', children:['hyunjune','linkedin','github']
-                    },
-                    'hyunjune':{type:'dir', children:['about.txt','skills.txt','contact.txt']},
-                    'about.txt':{type:'file', content:'A Software Engineer with a unique blend of high-level and low-level programming expertise. Work experience as a software engineering intern in Alocados Corp, and as an operations specialist in Orders Directorate of the Eighth Army. Fluency in C/C++ and Python with expertise in ML, strongly backgrounded by a GCP PMLE certification. Led key projects of development of a VLM (NIPA-Google) and a GIS mapping system (University of Toronto’s Engineering Department).\nSoon to begin a Machine Learning Software Engineer Internship at AMD, contributing to GPU-accelerated ML systems.'},
-                    'skills.txt':{type:'file', content:'Languages: C/C++, Python, SQL, JavaScript, HTML/CSS, ARM Assembly, Verilog\nFrameworks/Libraries: FastAPI, Node.js, React, AsyncIO, TensorFlow, PyTorch, scikit-learn, Numpy, pandas\nDatabases: MongoDB, PostgreSQL\nTools: Git, Docker, Kubernetes, AWS, Google Cloud, VS Code, Jupyter, Quartus, ModelSim, FPGA'},
-                    'contact.txt':{type:'file', content:'hyunjunn.kim@mail.utoronto.ca'},
-                    'linkedin':{type:'link', url:'https://www.linkedin.com/in/hyunjunekim/'},
-                    'github':{type:'link', url:'https://github.com/hyjuunn'}
-                };
-
-                let cwd = '~';
-                let prevCwd = null; // store previous directory for `cd .` behavior
-                function print(html, className){
-                    const el = document.createElement('div');
-                    el.className = 'line' + (className? ' '+className : '');
-                    el.innerHTML = html;
-                    output.appendChild(el);
-                    terminal.scrollTop = terminal.scrollHeight;
-                }
-
-                function help(){
-                    print('<div class="help">Available commands:</div>');
-                    const cmds = [
-                        ['help','Show this help'],
-                        ['ls','List files/folders'],
-                        ['cd <name>','Change directory'],
-                        ['pwd','Show current path'],
-                        ['cat <file>','Show file contents'],
-                        ['clear','Clear screen'],
-                        ['echo <text>','Print text'],
-                        ['exit','Close this tab/window']
-                    ];
-                    cmds.forEach(([c,d])=>{
-                        print(`<div class="help"><span class="cmd">${escapeHtml(c)}</span>— ${escapeHtml(d)}</div>`);
-                    });
-                }
-
-
-
-                function cd(args){
-                    const target = args[0];
-                    if(!target || target==='~'){ cwd='~'; updatePrompt(); return }
-                    // strip trailing slash if provided
-                    const t = String(target).replace(/\/+$/,'');
-
-                    // special: `cd .` -> go back to previous cwd (like toggling)
-                    if(t === '.'){
-                        if(prevCwd){ const old = cwd; cwd = prevCwd; prevCwd = old; updatePrompt(); }
-                        else { print('<span class="muted">No previous directory</span>'); }
-                        return;
-                    }
-                    const curNode = fileSystem[cwd];
-                    // only allow cd into items that exist in the current directory
-                    if(!curNode || curNode.type !== 'dir' || !Array.isArray(curNode.children) || !curNode.children.includes(t)){
-                        print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`);
-                        return;
-                    }
-                    const entry = fileSystem[t];
-                    if(!entry){ print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
-                    if(entry.type === 'link'){
-                        const url = entry.url;
-                        try{ window.open(url, '_blank'); print(`<span class="muted">Opening ${escapeHtml(url)}</span>`); }catch(e){ print(`<span class="muted">Opening: ${escapeHtml(url)}</span>`); }
-                        return;
-                    }
-                    if(entry.type === 'dir'){
-                        // record previous cwd before changing
-                        prevCwd = cwd;
-                        cwd = t; updatePrompt();
-                        return;
-                    }
-                    print(`<span class="error">Not a directory: ${escapeHtml(t)}</span>`);
-                }
-
-                function cat(args){
-                    const name = (args && args[0]) ? String(args[0]).trim() : '';
-                    if(!name){ print('<span class="muted">Usage: cat &lt;file&gt;</span>'); return }
-                    const curNode = fileSystem[cwd];
-                    if(!curNode || curNode.type!=='dir' || !Array.isArray(curNode.children)){
-                        print(`<span class="error">Not a directory: ${escapeHtml(cwd)}</span>`); return
-                    }
-                    // only allow reading files that are children of current directory
-                    if(!curNode.children.includes(name)){
-                        print(`<span class="error">No such file: ${escapeHtml(name)}</span>`); return
-                    }
-                    const node = fileSystem[name];
-                    if(!node || node.type !== 'file'){ print(`<span class="error">No such file: ${escapeHtml(name)}</span>`); return }
-                    const content = escapeHtml(node.content || '');
-                    // preserve newlines using <br>
-                    const html = `<span class="muted">${content.replace(/\n/g,'<br>')}</span>`;
-                    print(html);
-                }
-
-                function ls(args){
-                    // ls [optionalDir]
-                    const node = fileSystem[cwd];
-                    if(!node || node.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(cwd)}</span>`); return }
-                    let target = cwd;
-                    if(args && args.length>0){
-                        const raw = String(args[0]).trim();
-                        if(!raw){ /* ignore empty */ }
-                        else {
-                            const t = raw.replace(/\/+$/,'');
-                            // support ~ and ~/name
-                            if(t === '~' || t === '~/'){
-                                // going to root: record prevCwd
-                                prevCwd = cwd;
-                                target = '~';
-                            } else if(t.startsWith('~/')){
-                                const name = t.slice(2);
-                                if(fileSystem[name] && fileSystem[name].type==='dir') target = name;
-                                else { print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
-                            } else {
-                                // only allow listing directories that are children of current cwd
-                                if(!node.children || !node.children.includes(t)){ print(`<span class="error">No such directory: ${escapeHtml(t)}</span>`); return }
-                                const entry = fileSystem[t];
-                                if(!entry || entry.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(t)}</span>`); return }
-                                target = t;
-                            }
-                        }
-                    }
-
-                    const listNode = fileSystem[target];
-                    if(!listNode || listNode.type!=='dir'){ print(`<span class="error">Not a directory: ${escapeHtml(target)}</span>`); return }
-                    const list = (listNode.children||[]).map(name=>{
-                        const n = fileSystem[name]||{};
-                        if(n.type==='dir') return `<span class="dir-name">${escapeHtml(name)}/</span>`;
-                        if(n.type==='link') return `<span style="color:var(--purple)">${escapeHtml(name)}/</span>`;
-                        return `<span class="file">${escapeHtml(name)}</span>`;
-                    }).join('  ');
-                    print(list||'<span class="muted">(empty)</span>');
-                }
-
-                function echo(args){
-    print(escapeHtml(args.join(' ')));
-}
-
-                function pwd(){ print(cwd) }
-
-                function clear(){ output.innerHTML = ''; }
-
-                // best-effort exit: browsers block programmatic tab closes unless the
-                // page was opened by script. We attempt to close, and if blocked,
-                // provide a clickable fallback link the user can press.
-                function exitCmd(){
-                    try{
-                        // try common patterns for closing
-                        window.open('','_self');
-                        window.close();
-                    }catch(e){ /* ignore */ }
-
-                    // after a short delay, provide a fallback clickable link (can't reliably
-                    // detect closed state across all browsers, so always provide the fallback).
-                    const id = 'close-fallback-' + Date.now();
-                    print(`<div class="muted">If the tab did not close automatically, <a href="#" class="link" id="${id}">click here to close it</a> or press <code>Ctrl+W</code>.</div>`);
-                    setTimeout(()=>{
-                        const a = document.getElementById(id);
-                        if(!a) return;
-                        a.addEventListener('click', function(ev){
-                            ev.preventDefault();
-                            try{ window.open('','_self'); window.close(); }catch(e){ /* ignore */ }
-                            try{ window.location.href = 'about:blank'; }catch(e){ /* ignore */ }
-                        });
-                    },50);
-                }
-
-                function updatePrompt(){
-                    const dirEl = document.querySelector('.prompt .dir');
-                    if(dirEl) dirEl.textContent = cwd;
-                    if(userEl) userEl.textContent = userName;
-                }
-
-                // history
-                const history = [];
-                let histIndex = -1;
-
-                input.addEventListener('keydown', function(e){
-                    if(e.key === 'Enter'){
-                        const raw = input.value.trim();
-                        if(!raw) { input.value=''; return }
-                        const promptEcho = `<span class="hist-user">${userName}</span> <span class="hist-at">@</span> <span class="dir">${escapeHtml(cwd)}</span> $`;
-                        print(`${promptEcho} <span class="typed">${escapeHtml(raw)}</span>`);
-                        logCommand(raw);
-                        handleCommand(raw);
-                        history.unshift(raw);
-                        histIndex = -1;
-                        input.value = '';
-                        e.preventDefault();
-                    } else if(e.key === 'ArrowUp'){
-                        if(history.length>0){ histIndex = Math.min(history.length-1, (histIndex+1)); input.value = history[histIndex] }
-                        e.preventDefault();
-                    } else if(e.key === 'ArrowDown'){
-                        if(history.length>0){ histIndex = Math.max(-1, (histIndex-1)); input.value = history[histIndex]||'' }
-                        e.preventDefault();
-                    } else if(e.key === 'Tab'){
-                        e.preventDefault();
-                        autocomplete();
-                    }
-                });
-
-                function handleCommand(raw){
-                    const parts = raw.split(/\s+/).filter(Boolean);
-                    const cmd = parts[0].toLowerCase();
-                    const args = parts.slice(1);
-                    switch(cmd){
-                        case 'help': help(); break;
-                        case 'ls': ls(args); break;
-                        case 'cd': cd(args); break;
-                        case 'pwd': pwd(); break;
-                        case 'cat': cat(args); break;
-                        case 'exit': exitCmd(); break;
-                        case 'clear': clear(); break;
-                        case 'echo': echo(args); break;
-                        default:
-                            print('<span class="error">Unknown command: '+escapeHtml(cmd)+'</span>');
-                    }
-                }
-
-                function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
-
-                function autocomplete(){
-                    const val = input.value.trim();
-                    const candidates = ['help','ls','cd','pwd','cat','clear','echo','exit'];
-                    const matched = candidates.filter(c=>c.startsWith(val));
-                    if(matched.length===1) input.value = matched[0] + ' ';
-                }
-
-                // initial focus and accessibility
-                terminal.addEventListener('click', ()=> input.focus());
-                window.addEventListener('load', ()=>{ input.focus(); updatePrompt(); });
-
-            })();
-        </script>
-      </body>
-    </html>
+        terminal.addEventListener('click', ()=> input.focus());
+        window.addEventListener('load', ()=>{ input.focus(); updatePrompt(); });
+      })();
+    </script>
+  </body>
+</html>
