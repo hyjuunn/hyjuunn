@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OIACAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+            color: white;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Background Effects --- */
+        .club-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            z-index: -2;
+        }
+
+        /* Strobe Light Overlay */
+        .strobe-light {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+            mix-blend-mode: overlay;
+        }
+
+        .strobe-active {
+            animation: strobe Flash 0.1s infinite;
+        }
+
+        @keyframes strobe {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.15; }
+        }
+
+        /* Lasers */
+        .laser-beam {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 200vmax; height: 2px;
+            background: var(--neon-blue);
+            box-shadow: 0 0 10px var(--neon-blue);
+            opacity: 0;
+            transform-origin: left center;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .lasers-active .laser-beam {
+            opacity: 0.8;
+            animation: laserSpin 4s linear infinite;
+        }
+
+        .lasers-active .laser-beam:nth-child(2) { animation-delay: -1s; background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+        .lasers-active .laser-beam:nth-child(3) { animation-delay: -2s; background: lime; box-shadow: 0 0 10px lime; }
+        .lasers-active .laser-beam:nth-child(4) { animation-delay: -3s; background: yellow; box-shadow: 0 0 10px yellow; }
+
+        @keyframes laserSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* --- Main Stage --- */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        /* Crystal */
+        .crystal-container {
+            width: 180px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: float 3s ease-in-out infinite;
+            z-index: 50;
+            position: relative;
+        }
+
+        .crystal-img {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(200,200,255,0.4));
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+            border-top: 1px solid rgba(255,255,255,0.8);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: -30px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+
+        /* Cat & Party Mode */
+        .cat-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden initially */
+            flex-direction: column;
+            align-items: center;
+            z-index: 60;
+            cursor: pointer; /* Makes it look clickable */
+        }
+
+        .party-active .crystal-container {
+            display: none;
+        }
+
+        .party-active .cat-container {
+            display: flex;
+        }
+
+        .spinning-cat {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 50px var(--neon-pink), 0 0 100px var(--neon-blue);
+            animation: spin 1.8s linear infinite; 
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .party-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--neon-pink);
+            animation: pulseText 0.5s infinite alternate;
+        }
+
+        @keyframes pulseText {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* --- Particles (Optimized) --- */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes particleFly {
+            0% { transform: translate(0, 0) scale(0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .spinning-cat { width: 200px; height: 200px; }
+            .party-text { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="party-audio" loop>
+        <source src="https://www.myinstants.com/media/sounds/maxwell-the-cat-theme.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="club-bg"></div>
+    <div class="strobe-light" id="strobe"></div>
+    <div class="lasers-wrapper" id="lasers">
+        <div class="laser-beam"></div>
+        <div class="laser-beam"></div>
+        <div class="laser-beam"></div>
+        <div class="laser-beam"></div>
+    </div>
+
+    <div class="content" id="content-area">
+        <div class="crystal-container" onclick="startParty()">
+            <div class="crystal-img"></div>
+            <div class="click-hint">CLICK TO IGNITE</div>
+        </div>
+
+        <div class="cat-container" onclick="stopParty()">
+            <img src="2-1.thumb128.png" alt="Spinning Cat" class="spinning-cat">
+            <div class="party-text">OIA<br></div>
+            <div class="click-hint" style="position: relative; margin-top: 10px; bottom: auto;">CLICK TO STOP</div>
+        </div>
+    </div>
+
+    <script>
+        function startParty() {
+            const body = document.body;
+            const audio = document.getElementById('party-audio');
+            const strobe = document.getElementById('strobe');
+            const lasers = document.getElementById('lasers');
+
+            body.classList.add('party-active');
+            strobe.classList.add('strobe-active');
+            lasers.classList.add('lasers-active');
+
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio failed to play:", e));
+
+            spawnParticles();
+        }
+
+        function stopParty() {
+            const body = document.body;
+            const audio = document.getElementById('party-audio');
+            const strobe = document.getElementById('strobe');
+            const lasers = document.getElementById('lasers');
+
+            // 1. Remove classes to revert CSS state
+            body.classList.remove('party-active');
+            strobe.classList.remove('strobe-active');
+            lasers.classList.remove('lasers-active');
+
+            // 2. Stop and Reset Music
+            audio.pause();
+            audio.currentTime = 0; // Rewind to start
+        }
+
+        function spawnParticles() {
+            const container = document.body;
+            const isMobile = window.innerWidth < 768;
+            const count = isMobile ? 20 : 60; 
+
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                
+                const startX = window.innerWidth / 2;
+                const startY = window.innerHeight / 2;
+                
+                p.style.left = startX + 'px';
+                p.style.top = startY + 'px';
+                
+                const color = Math.random() > 0.5 ? '#00f3ff' : '#ff00ff';
+                p.style.background = color;
+                p.style.boxShadow = `0 0 10px ${color}`;
+                
+                const size = Math.random() * 6 + 2 + 'px';
+                p.style.width = size;
+                p.style.height = size;
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 300 + 100;
+                const tx = Math.cos(angle) * velocity + 'px';
+                const ty = Math.sin(angle) * velocity + 'px';
+                
+                p.style.setProperty('--tx', tx);
+                p.style.setProperty('--ty', ty);
+
+                const duration = Math.random() * 1 + 0.5 + 's';
+                p.style.animation = `particleFly ${duration} ease-out forwards`;
+
+                container.appendChild(p);
+                setTimeout(() => { p.remove(); }, 2000);
+            }
+
+            // Loop for continuous particles (will stop spawning if party-active class is removed)
+            const particleInterval = setInterval(() => {
+                if(document.body.classList.contains('party-active')) {
+                    if(Math.random() > (isMobile ? 0.8 : 0.5)) spawnSingleParticle();
+                } else {
+                    clearInterval(particleInterval); // Stop the interval loop when party stops
+                }
+            }, 100);
+        }
+
+        function spawnSingleParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.left = Math.random() * window.innerWidth + 'px';
+            p.style.top = Math.random() * window.innerHeight + 'px';
+            p.style.background = 'white';
+            p.style.width = '4px'; p.style.height = '4px';
+            p.style.setProperty('--tx', (Math.random()*100-50)+'px');
+            p.style.setProperty('--ty', (Math.random()*100-50)+'px');
+            p.style.animation = `particleFly 1s ease-out forwards`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+    </script>
+</body>
+</html>
