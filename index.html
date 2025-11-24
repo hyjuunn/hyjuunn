@@ -154,15 +154,11 @@
                 const WORKER_LOG_URL = "https://hyjuunn-logger.junekim1013.workers.dev/log";
                 
                 // === [Batch Queue System] ===
-                let logQueue = []; // 대기 중인 명령어들
-                let isSending = false; // 현재 전송 중인지 확인
-
-                // 토큰 가져오기 (비동기 대기)
+                let logQueue = []; 
+                let isSending = false; 
                 async function waitForTokenAndGet(){
                     const el = document.querySelector('input[name="cf-turnstile-response"]');
                     if(!el) return null;
-
-                    // 최대 10초 대기
                     for(let i=0; i<100; i++){
                         if(el.value) {
                             const t = el.value;
@@ -174,59 +170,50 @@
                     return null;
                 }
 
-                // 큐 처리기 (쌓인거 한방에 보내기)
                 async function processBatch(){
                     if(isSending || logQueue.length === 0) return;
                     isSending = true;
 
                     try {
-                        // 1. 토큰 확보 (여기서 1~2초 걸림)
+    
                         const token = await waitForTokenAndGet();
-                        
-                        // 기다리는 동안 큐에 더 쌓였을 수 있음 -> 현재 큐를 복사해서 전송 준비
+           
                         if(!token) throw new Error("Token timeout");
                         
-                        // 전송할 데이터 스냅샷 뜨기
                         const batchToSend = [...logQueue];
-                        // 큐 비우기
                         logQueue = [];
 
-                        // 2. 한 방에 전송 (batch 필드 이용)
                         await fetch(WORKER_LOG_URL, {
                             method: "POST",
                             headers: {"Content-Type":"application/json"},
                             body: JSON.stringify({
-                                batch: batchToSend, // 배열 통째로 전송
+                                batch: batchToSend,
                                 turnstileToken: token
                             })
                         });
 
                     } catch(e) {
                         console.error("Batch log error:", e);
-                        // 실패 시 큐에 다시 넣고 싶으면 여기서 처리 가능하나, 
-                        // 단순 로깅이므로 그냥 넘어감 (스팸 방지)
+
                     } finally {
                         // 3. 반드시 리셋
                         if(window.turnstile) window.turnstile.reset();
                         isSending = false;
-                        
-                        // 전송하는 동안 또 쌓인게 있다면 재귀 호출
+
                         if(logQueue.length > 0) {
-                            setTimeout(processBatch, 500); // 0.5초 뒤 재시도
+                            setTimeout(processBatch, 500); 
                         }
                     }
                 }
 
-                // 메인 로깅 함수 (이제 즉시 리턴됨)
+
                 function logCommand(raw){
-                    // 큐에 넣기만 하고 끝! (사용자는 딜레이 못 느낌)
                     logQueue.push({
                         cmd: sanitizeForLog(raw),
                         cwd: cwd,
                         ts: Date.now()
                     });
-                    
-                    // 전송 시작 (이미 보내고 있으면 무시됨)
+                
                     processBatch();
                 }
 
@@ -424,7 +411,14 @@
                         case 'cat': cat(args); break;
                         case 'exit': exitCmd(); break;
                         case 'clear': clear(); break;
-                        case 'echo': echo(args); break;
+                        case 'echo':
+                            if (args.length > 0 && args[0].toLowerCase() === 'oia') {
+                                window.open('oia.html', '_blank');
+                                print('<span class="muted">Opening OIA in a new tab...</span>'); 
+                            } else {
+                                echo(args); 
+                            }
+                            break;
                         default:
                             print('<span class="error">Unknown command: '+escapeHtml(cmd)+'</span>');
                     }
